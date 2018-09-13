@@ -13,19 +13,30 @@ mutable struct ga
 	ga(pp) = new(0.96, 0.03, [], pp, [[] for x in 1:length(pp[1])], [0 for x in 1:length(pp)], 0)
 end
 
-function print_graph(w)
-	for i = 1:size(w,1)
-		println(w[i,:])	
+function print_graph(graph)
+	for i = 1:size(graph, 1)
+		println(graph[i,:])	
 	end
 end
 
-file = "in"
-global w = readdlm(file, Int)
-print_graph(w)
+function random_solve(size)
+    return sample(1:size, size, replace = false)
+end
 
-solver = ga([[2,2,3], [2,2,3], [2,2,3]])
-println(solver.cx)
-solver.elitist = 0
-println(solver.elitist)
-println(solver.fitness)
-println(solver.next_population)
+function fitness(ind)
+	value = w[ind[10], ind[1]]
+	for i in 1:size(ind, 1) - 1
+		value += w[ind[i], ind[i+1]]
+	end
+	return value
+end
+
+file = "in"
+pop_sz = 10
+global w = readdlm(file, Int)
+# print_graph(w)
+
+pp = [random_solve(10) for x in 1:pop_sz]
+
+solver = ga(pp)
+println(solver)
