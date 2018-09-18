@@ -27,6 +27,27 @@ function params(solver::ga)
 	println("Total fitness: ", solver.total_fitness)
 end
 
+function every_fitness(solver::ga)
+	fs = []
+	tf = 0.0
+	for ind in solver.population
+		f = calc_fitness(ind)
+		tf += f
+		append!(fs, f)
+	end
+	solver.fitness = fs
+	solver.total_fitness = tf
+end
+
+function calc_fitness(ind)
+	f = 0.0
+	f += w[ind[size(ind, 1)], ind[1]] # ultimo -> primeiro
+	for i in 1:size(ind, 1) - 1
+		f += w[ind[i], ind[i+1]]
+	end
+	return f
+end
+
 function print_graph(graph)
 	for i = 1:size(graph, 1)
 		println(graph[i,:])	
@@ -45,6 +66,8 @@ function fitness(ind)
 	return value
 end
 
+
+
 file = "in"
 pop_sz = 10
 global w = readdlm(file, Int)
@@ -57,4 +80,6 @@ mr = 0.03
 solver = ga(cx, mr, pp)
 # solver = ga(pp)
 
+params(solver)
+every_fitness(solver)
 params(solver)
