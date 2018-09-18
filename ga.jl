@@ -11,6 +11,20 @@ mutable struct ga
 	fitness # every fitness
 	total_fitness
 	ga(pp) = new(0.96, 0.03, [], pp, [[] for x in 1:length(pp[1])], [0 for x in 1:length(pp)], 0)
+	ga(cx, mr, pp) = new(cx, mr, [], pp, [[] for x in 1:length(pp[1])], [0 for x in 1:length(pp)], 0)
+
+end
+
+function params(solver::ga)
+	println("Cx: ", solver.cx)
+	println("Mr: ", solver.mr)
+	println("Elitist: ", solver.elitist)
+	println("Population + Fitness:")
+	for i in 1:size(solver.fitness, 1)
+		println(solver.population[i], " : " , solver.fitness[i])
+	end
+	println("Fitness: ", solver.fitness)
+	println("Total fitness: ", solver.total_fitness)
 end
 
 function print_graph(graph)
@@ -37,6 +51,10 @@ global w = readdlm(file, Int)
 # print_graph(w)
 
 pp = [random_solve(10) for x in 1:pop_sz]
+cx = 0.96
+mr = 0.03
 
-solver = ga(pp)
-println(solver)
+solver = ga(cx, mr, pp)
+# solver = ga(pp)
+
+params(solver)
