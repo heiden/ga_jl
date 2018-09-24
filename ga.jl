@@ -1,4 +1,4 @@
-using DelimitedFiles, StatsBase, BenchmarkTools
+using DelimitedFiles, StatsBase, RandomNumbers
 # include("ga.jl") --> Benchmark
 # https://docs.julialang.org/en/v1/manual/constructors/
 
@@ -48,6 +48,30 @@ function calc_fitness(ind)
 	return f
 end
 
+function tourney(solver::ga, x)
+	selected = []
+	rng = MersenneTwisters.MT19937()
+	for i in 1:size(solver.population, 1) / 2
+		picks = sample(rng, 1:size(solver.population, 1), x)
+		candidates = [(solver.fitness[i], i) for i in picks]
+		sort!(candidates)
+		# if min
+		s = Pair(candidates[1][2], candidates[2][2])
+		# else Pair(candidates[size(candidates, 1) - 1][2], candidates[size(candidates)][2])
+		push!(selected, s)
+		println(s)
+	end
+	return selected
+end
+
+function crossover(solver::ga, selected)
+	for p in selected
+		oa, ob = [], []
+		
+
+	end
+end
+
 function print_graph(graph)
 	for i = 1:size(graph, 1)
 		println(graph[i,:])	
@@ -80,6 +104,8 @@ mr = 0.03
 solver = ga(cx, mr, pp)
 # solver = ga(pp)
 
-params(solver)
 every_fitness(solver)
 params(solver)
+selection = tourney(solver, 3)
+crossover(selection)
+# println(selection)
