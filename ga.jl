@@ -1,6 +1,7 @@
-using DelimitedFiles, StatsBase, RandomNumbers
-include("crossover.jl")
+using DelimitedFiles, StatsBase, RandomNumbers, Distributions
 include("class.jl")
+include("selection.jl")
+include("crossover.jl")
 # include("ga.jl") --> Benchmark
 # https://docs.julialang.org/en/v1/manual/constructors/
 
@@ -17,15 +18,11 @@ function params(solver::ga)
 end
 
 function every_fitness(solver::ga)
-	fs = []
-	tf = 0.0
 	for ind in solver.population
 		f = calc_fitness(ind)
-		tf += f
-		append!(fs, f)
+		solver.total_fitness += f
+		append!(solver.fitness, f)
 	end
-	solver.fitness = fs
-	solver.total_fitness = tf
 end
 
 function calc_fitness(ind)
@@ -35,22 +32,6 @@ function calc_fitness(ind)
 		f += w[ind[i], ind[i+1]]
 	end
 	return f
-end
-
-function tourney(solver::ga, x)
-	selected = []
-	rng = MersenneTwisters.MT19937()
-	for i in 1:length(solver.population) / 2
-		picks = sample(rng, 1:length(solver.population), x)
-		candidates = [(solver.fitness[i], i) for i in picks]
-		sort!(candidates)
-		# if min
-		s = Pair(candidates[1][2], candidates[2][2])
-		# else Pair(candidates[length(candidates) - 1][2], candidates[length(candidates)][2])
-		push!(selected, s)
-		println(s)
-	end
-	return selected
 end
 
 function print_graph(graph)
@@ -87,4 +68,4 @@ every_fitness(solver)
 params(solver)
 selection = tourney(solver, 3)
 one_point_crossover(solver, selection)
-# println(selection)
+println(solver.next_population)
