@@ -1,9 +1,7 @@
 using DelimitedFiles, StatsBase, RandomNumbers, Distributions
-include("class.jl")
-include("selection.jl")
-include("crossover.jl")
+include("class.jl"), include("selection.jl"), include("crossover.jl"), include("mutation.jl")
+
 # include("ga.jl") --> Benchmark
-# https://docs.julialang.org/en/v1/manual/constructors/
 
 function params(solver::ga)
 	println("Cx: ", solver.cx)
@@ -68,4 +66,6 @@ every_fitness(solver)
 params(solver)
 selection = tourney(solver, 3)
 one_point_crossover(solver, selection)
+println(solver.next_population)
+gaussian(solver)
 println(solver.next_population)
