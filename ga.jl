@@ -9,7 +9,7 @@ function params(solver::ga)
 	println("Mr: ", solver.mr)
 	println("Elitist: ", solver.elitist)
 	println("Population + Fitness:")
-	for i in 1:size(solver.fitness, 1)
+	for i in 1:length(solver.fitness)
 		println(solver.population[i], " : " , solver.fitness[i])
 	end
 	println("Fitness: ", solver.fitness)
@@ -30,8 +30,8 @@ end
 
 function calc_fitness(ind)
 	f = 0.0
-	f += w[ind[size(ind, 1)], ind[1]] # ultimo -> primeiro
-	for i in 1:size(ind, 1) - 1
+	f += w[ind[length(ind)], ind[1]] # ultimo -> primeiro
+	for i in 1:length(ind) - 1
 		f += w[ind[i], ind[i+1]]
 	end
 	return f
@@ -40,13 +40,13 @@ end
 function tourney(solver::ga, x)
 	selected = []
 	rng = MersenneTwisters.MT19937()
-	for i in 1:size(solver.population, 1) / 2
-		picks = sample(rng, 1:size(solver.population, 1), x)
+	for i in 1:length(solver.population) / 2
+		picks = sample(rng, 1:length(solver.population), x)
 		candidates = [(solver.fitness[i], i) for i in picks]
 		sort!(candidates)
 		# if min
 		s = Pair(candidates[1][2], candidates[2][2])
-		# else Pair(candidates[size(candidates, 1) - 1][2], candidates[size(candidates)][2])
+		# else Pair(candidates[length(candidates) - 1][2], candidates[length(candidates)][2])
 		push!(selected, s)
 		println(s)
 	end
@@ -54,7 +54,7 @@ function tourney(solver::ga, x)
 end
 
 function print_graph(graph)
-	for i = 1:size(graph, 1)
+	for i = 1:length(graph)
 		println(graph[i,:])	
 	end
 end
@@ -65,13 +65,11 @@ end
 
 function fitness(ind)
 	value = w[ind[10], ind[1]]
-	for i in 1:size(ind, 1) - 1
+	for i in 1:length(ind) - 1
 		value += w[ind[i], ind[i+1]]
 	end
 	return value
 end
-
-
 
 file = "in"
 pop_sz = 10
