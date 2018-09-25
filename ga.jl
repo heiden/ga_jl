@@ -1,19 +1,8 @@
 using DelimitedFiles, StatsBase, RandomNumbers
+include("crossover.jl")
+include("class.jl")
 # include("ga.jl") --> Benchmark
 # https://docs.julialang.org/en/v1/manual/constructors/
-
-mutable struct ga
-	cx
-	mr
-	elitist
-	population
-	next_population
-	fitness # every fitness
-	total_fitness
-	ga(pp) = new(0.96, 0.03, [], pp, [[] for x in 1:length(pp[1])], [0 for x in 1:length(pp)], 0)
-	ga(cx, mr, pp) = new(cx, mr, [], pp, [[] for x in 1:length(pp[1])], [0 for x in 1:length(pp)], 0)
-
-end
 
 function params(solver::ga)
 	println("Cx: ", solver.cx)
@@ -64,14 +53,6 @@ function tourney(solver::ga, x)
 	return selected
 end
 
-function crossover(solver::ga, selected)
-	for p in selected
-		oa, ob = [], []
-		
-
-	end
-end
-
 function print_graph(graph)
 	for i = 1:size(graph, 1)
 		println(graph[i,:])	
@@ -107,5 +88,5 @@ solver = ga(cx, mr, pp)
 every_fitness(solver)
 params(solver)
 selection = tourney(solver, 3)
-crossover(selection)
+one_point_crossover(solver, selection)
 # println(selection)
