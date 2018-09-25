@@ -10,4 +10,5 @@ function gaussian(solver::ga)
 			end
 		end
 	end
+	solver.population = solver.next_population
 end

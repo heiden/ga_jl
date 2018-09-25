@@ -1,5 +1,5 @@
 using DelimitedFiles, StatsBase, RandomNumbers, Distributions
-include("class.jl"), include("selection.jl"), include("crossover.jl"), include("mutation.jl")
+include("class.jl")#=, include("selection.jl")=#, include("crossover.jl"), include("mutation.jl")
 
 # include("ga.jl") --> Benchmark
 
@@ -24,12 +24,14 @@ function every_fitness(solver::ga)
 end
 
 function calc_fitness(ind)
-	f = 0.0
-	f += w[ind[length(ind)], ind[1]] # ultimo -> primeiro
-	for i in 1:length(ind) - 1
-		f += w[ind[i], ind[i+1]]
+	fs, ss = 0.0, 0.0
+	a, b = 20, 0.2
+	for i in ind
+		fs += i^2
+		ss += cos(2 * π * i)
 	end
-	return f
+	n = length(ind)
+	return -a * exp(-b * sqrt(fs/n)) - exp(ss/n) + a + exp(1)
 end
 
 function print_graph(graph)
@@ -38,34 +40,36 @@ function print_graph(graph)
 	end
 end
 
-function random_solve(size)
-    return sample(1:size, size, replace = false)
+function random_solve(size, lb, ub)
+    # return sample(1:size, size, replace = false)
+    rng = MersenneTwisters.MT19937()
+    return rand(rng, lb:ub, size)
 end
 
-function fitness(ind)
-	value = w[ind[10], ind[1]]
-	for i in 1:length(ind) - 1
-		value += w[ind[i], ind[i+1]]
-	end
-	return value
+function scan_ackley(file)
+	lines = readlines(file)
+	return tryparse(Int32, lines[1]), tryparse(Int32, lines[2]), tryparse(Float64, lines[3]), tryparse(Float64, lines[4]), tryparse(Float64, lines[5]), tryparse(Float64, lines[6])
 end
 
-file = "in"
-pop_sz = 10
-global w = readdlm(file, Int)
+file = "ackley.in"
+dim, pop_sz, cx, mr, lb, ub = scan_ackley(file)
+# global w = readdlm(file, Int)
 # print_graph(w)
 
-pp = [random_solve(10) for x in 1:pop_sz]
+pp = [random_solve(dim, lb, ub) for x in 1:pop_sz]
 cx = 0.96
 mr = 0.03
 
 solver = ga(cx, mr, pp)
 # solver = ga(pp)
 
+
 every_fitness(solver)
+# params(solver)
+# selection = tourney(solver, 2)
+for i in 1:1000
+	selection = [Pair(1,2), Pair(3,4), Pair(5,6), Pair(7,8), Pair(9,10)]
+	one_point_crossover(solver, selection)
+	gaussian(solver)
+end
 params(solver)
-selection = tourney(solver, 3)
-one_point_crossover(solver, selection)
-println(solver.next_population)
-gaussian(solver)
-println(solver.next_population)
