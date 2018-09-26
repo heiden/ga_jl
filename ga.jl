@@ -74,9 +74,9 @@ solver = ga(cx, mr, lb, ub, pp)
 for i in 1:3000
 	every_fitness(solver)
 	selection = tourney(solver, 2)
-	one_point_crossover(solver, selection)
+	two_point_crossover(solver, selection)
 	gaussian(solver)
 	reset_aux(solver)
-	println(solver.elitist)	
+	println(i, " ", solver.elitist[2])	
 end
-println(solver.elitist)
+# println(solver.elitist)
