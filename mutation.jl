@@ -10,5 +10,6 @@ function gaussian(solver::ga)
 			end
 		end
 	end
+	solver.next_population[1] = solver.elitist[1]
 	solver.population = solver.next_population
 end

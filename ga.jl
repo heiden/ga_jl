@@ -1,11 +1,12 @@
 using DelimitedFiles, StatsBase, RandomNumbers, Distributions
-include("class.jl")#=, include("selection.jl")=#, include("crossover.jl"), include("mutation.jl")
+include("class.jl"), include("selection.jl"), include("crossover.jl"), include("mutation.jl")
 
 # include("ga.jl") --> Benchmark
 
 function params(solver::ga)
 	println("Cx: ", solver.cx)
 	println("Mr: ", solver.mr)
+	println("Bounds: [", solver.lb, ", ",solver.ub, "]")
 	println("Elitist: ", solver.elitist)
 	println("Population + Fitness:")
 	for i in 1:length(solver.fitness)
@@ -20,6 +21,9 @@ function every_fitness(solver::ga)
 		f = calc_fitness(ind)
 		solver.total_fitness += f
 		append!(solver.fitness, f)
+		if f < solver.elitist[2]
+			solver.elitist = Pair(ind, f)
+		end
 	end
 end
 
@@ -51,25 +55,28 @@ function scan_ackley(file)
 	return tryparse(Int32, lines[1]), tryparse(Int32, lines[2]), tryparse(Float64, lines[3]), tryparse(Float64, lines[4]), tryparse(Float64, lines[5]), tryparse(Float64, lines[6])
 end
 
+function reset_aux(solver::ga)
+	solver.next_population = []
+	solver.fitness = []
+	solver.total_fitness = 0
+end
+
 file = "ackley.in"
 dim, pop_sz, cx, mr, lb, ub = scan_ackley(file)
 # global w = readdlm(file, Int)
 # print_graph(w)
 
 pp = [random_solve(dim, lb, ub) for x in 1:pop_sz]
-cx = 0.96
-mr = 0.03
 
-solver = ga(cx, mr, pp)
-# solver = ga(pp)
+solver = ga(cx, mr, lb, ub, pp)
 
-
-every_fitness(solver)
 # params(solver)
-# selection = tourney(solver, 2)
-for i in 1:1000
-	selection = [Pair(1,2), Pair(3,4), Pair(5,6), Pair(7,8), Pair(9,10)]
+for i in 1:3000
+	every_fitness(solver)
+	selection = tourney(solver, 2)
 	one_point_crossover(solver, selection)
 	gaussian(solver)
+	reset_aux(solver)
+	println(solver.elitist)	
 end
-params(solver)
+println(solver.elitist)
