@@ -15,7 +15,7 @@ function gaussian(solver::ga)
 		end
 		clamp!(ind, solver.lb, solver.ub)
 	end
-	elitism(solver)
+	# elitism(solver)
 	solver.population = solver.next_population
 end
 
