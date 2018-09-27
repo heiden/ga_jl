@@ -29,13 +29,13 @@ end
 
 function calc_fitness(ind)
 	fs, ss = 0.0, 0.0
-	a, b = 20, 0.2
+	α, β = 20, 0.2
 	for i in ind
 		fs += i^2
 		ss += cos(2 * π * i)
 	end
 	n = length(ind)
-	return -a * exp(-b * sqrt(fs/n)) - exp(ss/n) + a + exp(1)
+	return -α * exp(-β * sqrt(fs/n)) - exp(ss/n) + α + exp(1)
 end
 
 function print_graph(graph)
@@ -45,7 +45,6 @@ function print_graph(graph)
 end
 
 function random_solve(size, lb, ub)
-    # return sample(1:size, size, replace = false)
     rng = MersenneTwisters.MT19937()
     return rand(rng, lb:ub, size)
 end
@@ -56,6 +55,8 @@ function scan_ackley(file)
 end
 
 function reset_aux(solver::ga)
+	println(solver.fitness)
+	println(solver.elitist)
 	solver.next_population = []
 	solver.fitness = []
 	solver.total_fitness = 0
@@ -74,7 +75,7 @@ solver = ga(cx, mr, lb, ub, pp)
 for i in 1:3000
 	every_fitness(solver)
 	selection = tourney(solver, 2)
-	two_point_crossover(solver, selection)
+	blx(solver, selection)
 	gaussian(solver)
 	reset_aux(solver)
 	println(i, " ", solver.elitist[2])	
