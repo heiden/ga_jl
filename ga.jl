@@ -55,8 +55,6 @@ function scan_ackley(file)
 end
 
 function reset_aux(solver::ga)
-	println(solver.fitness)
-	println(solver.elitist)
 	solver.next_population = []
 	solver.fitness = []
 	solver.total_fitness = 0
@@ -72,7 +70,7 @@ pp = [random_solve(dim, lb, ub) for x in 1:pop_sz]
 solver = ga(cx, mr, lb, ub, pp)
 
 # params(solver)
-for i in 1:3000
+for i in 1:1000
 	every_fitness(solver)
 	selection = tourney(solver, 2)
 	blx(solver, selection)

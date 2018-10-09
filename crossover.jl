@@ -47,12 +47,12 @@ function blx(solver::ga, selected)
 				ub = min(solver.ub, max(ia[i], ib[i]) + α*Δ)
 				if Δ != 0 
 					d = Uniform(lb, ub)
-					x = rand(d)
+					x, y = rand(d), rand(d)
 				else
-					x = lb
+					x, y = lb, lb
 				end
 				append!(oa, x)
-				append!(ob, x)
+				append!(ob, y)
 			end
 		else
 			oa, ob = ia, ib
