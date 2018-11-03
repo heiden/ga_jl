@@ -4,13 +4,17 @@ function tourney(solver::ga, x)
 	selected = []
 	rng = MersenneTwisters.MT19937()
 	for i in 1:length(solver.population) / 2
-		picks = sample(rng, 1:length(solver.population), x, replace = false)
-		candidates = [(solver.fitness[i], i) for i in picks]
-		sort!(candidates)
-		# if min
-		s = Pair(candidates[1][2], candidates[2][2])
-		# else s = Pair(candidates[length(candidates) - 1][2], candidates[length(candidates)][2])
-		push!(selected, s)
+		s = []
+		for j in 1:2
+			picks = sample(rng, 1:length(solver.population), x, replace = false)
+			candidates = [(solver.fitness[i], i) for i in picks]
+			sort!(candidates)
+			# if min
+			# push!(s, candidates[1][2])
+			# else 
+			push!(s, candidates[length(candidates) - 1][2])
+		end
+		push!(selected, (s[1], s[2]))
 	end
 	return selected
 end
